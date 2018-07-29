@@ -90,9 +90,15 @@ body {
   overflow-y: auto;
 }
 
-#shadowbox > #container > img {
-  border: 10px solid #fff;
+#shadowbox > #container > img,
+#shadowbox > #container > video {
   width: 100%;
+  display: none;
+}
+
+#shadowbox > #container > img.active,
+#shadowbox > #container > video.active {
+  display: block;
 }
 
 h1 {

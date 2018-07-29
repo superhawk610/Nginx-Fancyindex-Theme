@@ -2,7 +2,9 @@
 $('body').wrapInner('<div id="wrapper" />')
 
 // supported image types
-var isSupported = /png|jpe?g|svg|tiff?|gif/i
+var isSupported = /png|jpe?g|svg|tiff?|gif|mp4|flv|webm/i
+var isImage = /png|jpe?g|svg|tiff?|gif/i
+var isVideo = /mp4|flv|webm/i
 
 // check file listing for supported image types
 var imageRows = []
@@ -32,13 +34,26 @@ function refreshArrows() {
   }
 }
 
+// hide/show media containers as appropriate
+function displayMedia(href) {
+  if (href.match(isImage)) {
+    $('#shadowbox img')
+      .attr('src', href)
+      .addClass('active')
+    $('#shadowbox video').removeClass('active')
+  }
+  if (href.match(isVideo)) {
+    $('#shadowbox video')
+      .attr('src', href)
+      .addClass('active')
+    $('#shadowbox img').removeClass('active')
+  }
+}
+
 // intercept clicks on images and display in shadowbox
 $(document).on('click', 'a', function(e) {
-  if (
-    $(this)
-      .attr('href')
-      .match(isSupported)
-  ) {
+  var href = $(this).attr('href')
+  if (href.match(isSupported)) {
     e.preventDefault()
 
     var $row = $(this).closest('tr'),
@@ -47,7 +62,7 @@ $(document).on('click', 'a', function(e) {
     currentIndex = imageRows.indexOf(i)
     refreshArrows()
 
-    $('#shadowbox img').attr('src', $(this).attr('href'))
+    displayMedia(href)
     $('#shadowbox').addClass('active')
   }
 })
@@ -57,38 +72,36 @@ $(document).on('click', '#shadowbox', function(e) {
   $('#shadowbox').removeClass('active')
   setTimeout(function() {
     $('#shadowbox img').attr('src', '')
+    $('#shadowbox video').attr('src', '')
   }, 300)
 })
 
 // load prev/next pictures on arrow clicks
-$(document).on('click', '#shadowbox #arrow-left', function(e) {
-  e.stopPropagation()
+function loadMediaPreview() {
   $('#shadowbox img').attr('src', '')
+  $('#shadowbox video').attr('src', '')
 
-  currentIndex--
-  var newIndex = imageRows[currentIndex]
-  $newAnchor = $('table tbody tr')
-    .eq(newIndex)
-    .find('a')
+  var newIndex = imageRows[currentIndex],
+    $newAnchor = $('table tbody tr')
+      .eq(newIndex)
+      .find('a'),
+    href = $newAnchor.attr('href')
 
   refreshArrows()
 
-  $('#shadowbox img').attr('src', $newAnchor.attr('href'))
+  displayMedia(href)
+}
+
+$(document).on('click', '#shadowbox #arrow-left', function(e) {
+  e.stopPropagation()
+  currentIndex--
+  loadMediaPreview()
 })
 
 $(document).on('click', '#shadowbox #arrow-right', function(e) {
   e.stopPropagation()
-  $('#shadowbox img').attr('src', '')
-
   currentIndex++
-  var newIndex = imageRows[currentIndex]
-  $newAnchor = $('table tbody tr')
-    .eq(newIndex)
-    .find('a')
-
-  refreshArrows()
-
-  $('#shadowbox img').attr('src', $newAnchor.attr('href'))
+  loadMediaPreview()
 })
 
 $(document).on('click', '#shadowbox #container', function(e) {
