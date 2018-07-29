@@ -15,7 +15,7 @@ The fancyindex module can be found [here](https://github.com/aperezdc/ngx-fancyi
 
 ### [NEW] Warm theme:
 
-_wip_
+![warm_theme](screenshots/warm.png)
 
 ### [NEW] Image previews:
 
